@@ -1,0 +1,55 @@
+## Prepare a data frame with mutation counts and additional information / no signatures
+
+## TCGA Data
+
+# All samples with age and gender from cBioPortal
+data.tcga       <- read.table(file = 'data/skcm_tcga_clinical_data.tsv', sep = '\t', header = TRUE)
+data.tcga       <- data.tcga[,c('Patient.ID','Diagnosis.Age','Person.Gender', 'Tumor.Site')]
+colnames(data.tcga) <- c('ID','Age','Gender', 'Site')
+
+# Remove duplicate samples
+data.tcga       <- data.tcga[!duplicated(data.tcga$ID),]
+
+# Remove samples with no age information
+data.tcga       <- data.tcga[!is.na(data.tcga$Age),]
+
+## BRAF/NRAS/NF1 information
+
+cohorts <- read.csv('data/tcga_new_data_auto.csv', header=TRUE)
+cohorts$Sample <- substr(cohorts[,c('Sample')],1,12)
+cohorts <- cohorts[!cohorts$CLASSIFICATION %in% 'LEAVE OUT',]
+data.tcga <- data.tcga[data.tcga$ID %in% cohorts$Sample,]
+indices <- match(data.tcga$ID, cohorts$Sample)
+data.tcga$Cohort <- cohorts[indices,'CLASSIFICATION']
+data.tcga[,'Cohort'] <- gsub('WT','W3',data.tcga[,'Cohort'])
+
+## MC1R information from MC1R paper
+mc1r <- read.csv('data/ncomms12064-s3.csv', header=TRUE, skip=1)
+data.tcga$MC1R <- rep(NA, nrow(data.tcga))
+
+indices1 <- match(mc1r$BARCODE, data.tcga$ID)
+indices1 <- indices1[!is.na(indices1)]
+indices2 <- match(data.tcga[indices1,'ID'], mc1r$BARCODE)
+data.tcga[indices1,'MC1R'] <- as.character(mc1r[indices2,c('rgeno')])
+
+## Signature information 
+data.tcga.new <- data.tcga
+data.tcga.new$Sig1Rel <- cohorts[indices,'TotalSig1Number']
+data.tcga.new$Sig7Rel <- cohorts[indices,'TotalSig7Number']
+data.tcga.new$Sig5Rel <- cohorts[indices,'TotalSig5Number']
+data.tcga.new$TotalSNV <- cohorts[indices,'GDC_SigData.TotalMutNumber']
+data.tcga.new$Sig1Total <- round(data.tcga.new$Sig1Rel*data.tcga.new$TotalSNV)
+data.tcga.new$Sig7Total <- round(data.tcga.new$Sig7Rel*data.tcga.new$TotalSNV)
+data.tcga.new$Sig5Total <- round(data.tcga.new$Sig5Rel*data.tcga.new$TotalSNV)
+
+# Remove outliers
+Y <- sqrt(2*data.tcga.new$Sig1Total/data.tcga.new$Age)
+m <- median(Y)
+data.tcga.new <- data.tcga.new[data.tcga.new$Sig1Total/data.tcga.new$Age<m+3,]
+# Remove zero entries
+data.tcga.new <- subset(data.tcga.new, Sig1Total>0)
+#data.tcga.new <- subset(data.tcga.new, Sig7Total>0)
+cat("After removing outliers, we are left with", dim(data.tcga.new)[1], "entries.")
+
+# Save into file
+save(data.tcga.new, file='data/tcga_samples.Rdata')

@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575182348123.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3790323856",
+    "id" : "3862D7CF",
+    "lastKnownWriteTime" : 1575183140,
+    "last_content_update" : 1575183140505,
+    "path" : "C:/Users/Martin Lotz/Dropbox/Shared/Simon Martin (1)/code/extract.R",
+    "project_path" : "extract.R",
+    "properties" : {
+        "cursorPosition" : "12,29",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

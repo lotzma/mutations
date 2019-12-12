@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575182350068.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2106346337",
+    "id" : "F12109D1",
+    "lastKnownWriteTime" : 1575184436,
+    "last_content_update" : 1575184436426,
+    "path" : "C:/Users/Martin Lotz/Dropbox/Shared/Simon Martin (1)/code/prepare.R",
+    "project_path" : "prepare.R",
+    "properties" : {
+        "cursorPosition" : "50,1",
+        "scrollLine" : "21"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
